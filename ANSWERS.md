@@ -20,3 +20,30 @@
 
 
 # Authenticated Symetric Encryption
+
+1) Fernet est plus sûr car il est conçu pour gérer à la fois le chiffrement et la vérification d'intégrité automatiquement, sans que l'on ait à s'en préoccuper. Cela réduit le risque d'erreurs dans l'implémentation, notamment en ce qui concerne le padding et l'intégrité des données.
+
+2) On appelle cela une attaque par relecture ou replay attack, où un attaquant envoie de nouveau des messages interceptés auparavant pour tromper le système.
+
+3) On peut utiliser un nonce (numéro unique) ou un timestamp dans chaque message pour vérifier que les messages sont nouveaux et ne sont pas des copies renvoyées. Cela permet de bloquer les attaques par relecture.
+
+
+# TTL 
+
+1) Oui, la principale difference est l'ajout du TTL, les messages ont une durée de vie limitée et s'ils depassent cette limite, ils ne peuvent plus etre déchiffrés.
+
+2) Le message sera rejeté car il sera considéré comme expiré. Le decalage du temps fait croire que le message a depassé sa durée de vie.
+
+3) Oui ça aide à se proteger de l'attaque precedent. Les messages expirent rapidement, ce qui empeche un attaquant de reutiliser d'anciens messages interceptés. 
+
+4) Cette methode peut rencontrer des problemes si les horloges des systemes ne sont pas synchronisés. De plus, si le TTL est trop long, cela laisse encore la possibilité d'une attaque 
+
+
+
+# Regard Critique 
+
+-La bibliotheque Fernet n'est pas conçue pour chiffrer des fichiers ou messages trop volumineux, ce qui peut poser probléme si on doit échanger de gros volumes de données. 
+
+-Meme si la generation des IV avec os.urandom() est relativement securisée, un attaquant trés sophistiqué pourrait essayé de predire les IV sur un systeme mal securisé.
+
+-Bien que les messages soient chiffrés, les noms des utilisateurs et l'historique d'envoi des messages reste visible. Un attaquant pourrait savoir qui communique avec qui meme sans connaitre le contenu des messages. On pourrait utiliser des protocoles qui permettent de chiffrer les metadonnées.
